@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你是《西游记》中的谁</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --primary: #C41E3A;
+      --secondary: #FFD700;
+      --accent-green: #2E8B57;
+      --accent-brown: #8B4513;
+      --bg-gradient: linear-gradient(135deg, #FFF8E7 0%, #FFEFD5 50%, #FFF0E0 100%);
+      --text-dark: #2C1810;
+      --text-light: #F5F5F5;
+      --cloud-white: #FDFBF7;
+      --shadow-soft: rgba(139, 69, 19, 0.15);
+      --shadow-gold: rgba(255, 215, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* 祥云装饰 */
+    .clouds {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .cloud {
+      position: absolute;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.8) 0%, rgba(255,248,231,0) 70%);
+      border-radius: 50%;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .cloud-1 {
+      width: 300px;
+      height: 150px;
+      top: 10%;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .cloud-2 {
+      width: 200px;
+      height: 100px;
+      top: 30%;
+      right: -50px;
+      animation-delay: -5s;
+    }
+
+    .cloud-3 {
+      width: 250px;
+      height: 120px;
+      bottom: 20%;
+      left: 10%;
+      animation-delay: -10s;
+    }
+
+    .cloud-4 {
+      width: 180px;
+      height: 90px;
+      top: 50%;
+      left: 60%;
+      animation-delay: -15s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      25% { transform: translateX(20px) translateY(-10px); }
+      50% { transform: translateX(0) translateY(-20px); }
+      75% { transform: translateX(-20px) translateY(-10px); }
+    }
+
+    /* 页面区域 */
+    .page {
+      display: none;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 封面页 */
+    #cover {
+      text-align: center;
+      padding-top: 15vh;
+    }
+
+    .cover-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      text-shadow: 2px 2px 4px var(--shadow-soft);
+      position: relative;
+    }
+
+    .cover-title::before,
+    .cover-title::after {
+      content: "☁";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      opacity: 0.6;
+    }
+
+    .cover-title::before { left: -40px; }
+    .cover-title::after { right: -40px; }
+
+    .cover-subtitle {
+      font-size: 1.1rem;
+      color: var(--accent-brown);
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    .cover-characters {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 50px;
+    }
+
+    .mini-character {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      animation: bounce 2s ease-in-out infinite;
+      box-shadow: 0 4px 15px var(--shadow-soft);
+      overflow: hidden;
+      border: 3px solid rgba(139, 69, 19, 0.3);
+    }
+
+    .mini-character img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mini-character:nth-child(1) { background: #FFF5E6; animation-delay: 0s; }
+    .mini-character:nth-child(2) { background: #FFF9E6; animation-delay: 0.2s; }
+    .mini-character:nth-child(3) { background: #FFE6E6; animation-delay: 0.4s; }
+    .mini-character:nth-child(4) { background: #E6FFE6; animation-delay: 0.6s; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .btn {
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      padding: 16px 48px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, #E63946 100%);
+      color: var(--text-light);
+      box-shadow: 0 6px 20px rgba(196, 30, 58, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(196, 30, 58, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--cloud-white);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: var(--text-light);
+    }
+
+    /* 测试页 */
+    #test {
+      padding-top: 20px;
+    }
+
+    .progress-container {
+      margin-bottom: 30px;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: rgba(139, 69, 19, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary) 0%, #FFA500 100%);
+      border-radius: 6px;
+      transition: width 0.5s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: "☁";
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    .progress-text {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--accent-brown);
+      margin-top: 8px;
+    }
+
+    .question-card {
+      background: var(--cloud-white);
+      border-radius: 20px;
+      padding: 30px 24px;
+      box-shadow: 0 10px 40px var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent-green));
+    }
+
+    .question-number {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .option {
+      background: linear-gradient(135deg, #FFFAF5 0%, #FFF5EB 100%);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    .option:hover {
+      border-color: var(--secondary);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--shadow-gold);
+    }
+
+    .option:active {
+      transform: scale(0.98);
+    }
+
+    .option.selected {
+      border-color: var(--secondary);
+      background: linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%);
+      box-shadow: 0 4px 15px var(--shadow-gold);
+    }
+
+    .option-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .option-text {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--text-dark);
+    }
+
+    /* 结果页 */
+    #result {
+      text-align: center;
+      padding-top: 20px;
+    }
+
+    .result-card {
+      background: var(--cloud-white);
+      border-radius: 24px;
+      padding: 40px 24px;
+      box-shadow: 0 15px 50px var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, var(--shadow-gold) 0%, transparent 50%);
+      animation: pulse 4s ease-in-out infinite;
+      opacity: 0.3;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.1); opacity: 0.5; }
+    }
+
+    .result-character {
+      font-size: 5rem;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+      animation: floatIn 1s ease-out;
+    }
+
+    .result-character-img {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--secondary);
+      box-shadow: 0 8px 30px var(--shadow-gold);
+      animation: floatIn 1s ease-out;
+    }
+
+    .result-character-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(-50px) scale(0.5); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .result-title {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.2rem;
+      color: var(--accent-brown);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-name {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out 0.3s both;
+    }
+
+    .result-description {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-dark);
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out 0.5s both;
+    }
+
+    .traits {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out 0.7s both;
+    }
+
+    .trait {
+      background: linear-gradient(135deg, #FFF0E6 0%, #FFE4D6 100%);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--accent-brown);
+      border: 1px solid rgba(139, 69, 19, 0.2);
+    }
+
+    .exam-tip {
+      background: linear-gradient(135deg, #FFF9E6 0%, #FFF5CC 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out 0.9s both;
+      text-align: left;
+    }
+
+    .exam-tip-title {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .exam-tip-content {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text-dark);
+    }
+
+    .result-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-out 1.1s both;
+    }
+
+    /* 重新测试按钮样式优化 */
+    .btn-outline {
+      background: transparent;
+      color: var(--accent-brown);
+      border: 2px solid var(--accent-brown);
+      padding: 12px 32px;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Noto Sans SC', sans-serif;
+    }
+
+    .btn-outline:hover {
+      background: var(--accent-brown);
+      color: var(--text-light);
+    }
+
+    /* 说明页 */
+    #intro {
+      padding-top: 10vh;
+    }
+
+    .intro-card {
+      background: var(--cloud-white);
+      border-radius: 24px;
+      padding: 36px 28px;
+      box-shadow: 0 15px 50px var(--shadow-soft);
+      text-align: center;
+    }
+
+    .intro-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .intro-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+    }
+
+    .intro-text {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--accent-brown);
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .intro-steps {
+      text-align: left;
+      margin-bottom: 30px;
+    }
+
+    .intro-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: var(--text-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-dark);
+      padding-top: 3px;
+    }
+
+    /* 响应式 */
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px;
+      }
+
+      .question-card {
+        padding: 24px 18px;
+      }
+
+      .option {
+        padding: 14px 16px;
+      }
+
+      .cover-characters {
+        gap: 12px;
+      }
+
+      .mini-character {
+        width: 50px;
+        height: 50px;
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 祥云背景 -->
+  <div class="clouds">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+  </div>
+
+  <div class="container">
+    <!-- 封面页 -->
+    <div id="cover" class="page active">
+      <h1 class="cover-title">你是《西游记》中的谁</h1>
+      <p class="cover-subtitle">一场关于性格的取经之旅</p>
+      
+      <div class="cover-characters">
+        <div class="mini-character"><img src="generated-images/唐僧.png" alt="唐僧"></div>
+        <div class="mini-character"><img src="generated-images/孙悟空.png" alt="孙悟空"></div>
+        <div class="mini-character"><img src="generated-images/猪八戒.png" alt="猪八戒"></div>
+        <div class="mini-character"><img src="generated-images/沙和尚.png" alt="沙悟净"></div>
+      </div>
+
+      <button class="btn btn-primary" id="btnStart">开始测试</button>
+    </div>
+
+    <!-- 说明页 -->
+    <div id="intro" class="page">
+      <div class="intro-card">
+        <div class="intro-icon">📜</div>
+        <h2 class="intro-title">测试说明</h2>
+        <p class="intro-text">
+          在这场取经之旅中，你将遇到8个情境考验。每个选择没有对错，只关乎真实的你。
+        </p>
+        <div class="intro-steps">
+          <div class="intro-step">
+            <span class="step-number">1</span>
+            <span class="step-text">阅读情境，思考如果是自己会怎么做</span>
+          </div>
+          <div class="intro-step">
+            <span class="step-number">2</span>
+            <span class="step-text">选择最符合你真实反应的选项</span>
+          </div>
+          <div class="intro-step">
+            <span class="step-number">3</span>
+            <span class="step-text">完成全部题目，解锁你的取经角色</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btnGo">准备好了，出发！</button>
+        <br><br>
+        <button class="btn-outline" id="btnBack">返回</button>
+      </div>
+    </div>
+
+    <!-- 测试页 -->
+    <div id="test" class="page">
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="progress-text" id="progressText">第 1 题 / 共 8 题</p>
+      </div>
+
+      <div class="question-card">
+        <p class="question-number" id="questionNumber">第一题</p>
+        <p class="question-text" id="questionText"></p>
+        <div class="options" id="options"></div>
+      </div>
+    </div>
+
+    <!-- 结果页 -->
+    <div id="result" class="page">
+      <div class="result-card">
+        <div class="result-character" id="resultCharacter"></div>
+        <div class="result-character-img" id="resultCharacterImg" style="display:none;">
+          <img id="resultImg" src="" alt="测试结果">
+        </div>
+        <p class="result-title" id="resultTitle"></p>
+        <h2 class="result-name" id="resultName"></h2>
+        <p class="result-description" id="resultDescription"></p>
+        
+        <div class="traits" id="traits"></div>
+
+        <div class="exam-tip">
+          <p class="exam-tip-title">📚 中考考点链接</p>
+          <p class="exam-tip-content" id="examTip"></p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn-primary" id="btnRestart">再测一次</button>
+          <button class="btn-outline" id="btnShare">保存图片分享</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log('页面开始加载...');
+    
+    // 题目数据
+      const questions = [
+      {
+        id: 1,
+        scenario: "取经路上遇到一座似乎无法跨越的大山，你会怎么做？",
+        options: [
+          { text: "冷静下来仔细观察，寻找可能的路径或方法", character: "sand", icon: "🤔" },
+          { text: "二话不说直接尝试翻越，办法总比困难多！", character: "sun", icon: "💪" },
+          { text: "先问问有没有人知道捷径，或者找个地方歇歇再说", character: "sand", icon: "😌" },
+        ]
+      },
+      {
+        id: 2,
+        scenario: "团队需要完成一个重要任务，你会主动承担什么角色？",
+        options: [
+          { text: "协调者，确保每个人都知道自己要做什么", character: "tang", icon: "👑" },
+          { text: "先锋，去做最难、最关键的那部分", character: "sun", icon: "⚔️" },
+          { text: "支持者，做好自己的同时顺便帮帮其他人", character: "sand", icon: "🤝" }
+        ]
+      },
+      {
+        id: 3,
+        scenario: "你发现队友犯了一个可能导致失败的错误，你会？",
+        options: [
+          { text: "私下提醒他，给他留面子和改正的机会", character: "sun", icon: "🤫" },
+          { text: "直接指出问题，因为原则面前不能含糊", character: "tang", icon: "⚖️" },
+          { text: "假装没看见，万一不是我想的那样呢...", character: "pig", icon: "😶" }
+        ]
+      },
+      {
+        id: 4,
+        scenario: "长途跋涉后你感到非常疲惫，这时候你会？",
+        options: [
+          { text: "咬牙坚持，不能因为自己影响团队进度", character: "sand", icon: "💪" },
+          { text: "想办法让大家振作起来，士气比体力更重要", character: "pig", icon: "🎉" },
+          { text: "调整心态继续前进，目标就在前方", character: "tang", icon: "🎯" }
+        ]
+      },
+      {
+        id: 5,
+        scenario: "前方出现一条看似能更快到达目的地的【捷径】，但看起来有些可疑，你会？",
+        options: [
+          { text: "坚决走大路，安全第一，不忘初心", character: "tang", icon: "🚫" },
+          { text: "先评估一下风险，如果可控可以试试", character: "sun", icon: "🧐" },
+          { text: "有点心动，但会跟大伙商量后再决定", character: "pig", icon: "💭" }
+        ]
+      },
+      {
+        id: 6,
+        scenario: "和团队成员意见不合时，你通常会？",
+        options: [
+          { text: "充分讨论，争取说服对方或找到折中方案", character: "tang", icon: "🗣️" },
+          { text: "坚持自己的判断，用结果来证明", character: "sun", icon: "🦁" },
+          { text: "先顺着对方，之后再慢慢调整", character: "pig", icon: "🐵" }
+        ]
+      },
+      {
+        id: 7,
+        scenario: "你更认同下面哪种对【成功】的定义？",
+        options: [
+          { text: "达到最初设定的目标，坚持就是胜利", character: "tang", icon: "🎯" },
+          { text: "在追求目标的过程中不断成长和突破", character: "sun", icon: "📈" },
+          { text: "让身边的人因为你而感到幸福和安心", character: "sand", icon: "💖" }
+        ]
+      },
+      {
+        id: 8,
+        scenario: "面对一个几乎不可能完成的任务，你的反应是？",
+        options: [
+          { text: "全力以赴，相信坚持就会有奇迹", character: "tang", icon: "✨" },
+          { text: "想想有没有其他替代方案，条条大路通罗马", character: "sun", icon: "🧠" },
+          { text: "尽力而为，无论结果怎样都要保持乐观", character: "pig", icon: "🌈" }
+        ]
+      }
+    ];
+
+    // 结果数据
+    const results = {
+      tang: {
+        emoji: "🤵",
+        img: "generated-images/唐僧.png",
+        title: "信念坚定者",
+        name: "唐僧",
+        description: "你是取经团队的精神领袖！信念是你最强大的武器，无论遇到什么妖魔鬼怪，你都不会轻易放弃。你的坚持和原则常常感染身边的人，让他们也变得更有力量。不过有时候也要记得，适度的灵活也是一种智慧哦！",
+        traits: ["坚定信念", "原则性强", "富有感染力", "善于引导"],
+        exam: "本题对应《西游记》中唐僧【矢志不渝】的核心形象。中考常见考点：分析唐僧形象（虔诚向佛、不畏艰险、有时过于软弱）；理解取经路上【心诚志坚】的主题；探讨英雄形象的多元性。"
+      },
+      sun: {
+        emoji: "🦸",
+        img: "generated-images/孙悟空.png",
+        title: "智勇双全者",
+        name: "孙悟空",
+        description: "你是团队的问题终结者！七十二变都不够用，因为你有更强的武器——智慧和勇气。面对困难你从不退缩，总能想出办法解决。你的能力让你成为团队的定海神针。学会信任队友、适度放权，你会更加强大！",
+        traits: ["能力出众", "机智勇敢", "敢于挑战", "独立自主"],
+        exam: "本题对应《西游记》中孙悟空的核心形象分析。中考常见考点：孙悟空【大闹天宫】的情节意义；【三打白骨精】中的人物形象；理解【斗战胜佛】的成长主题——从叛逆到担当。"
+      },
+      pig: {
+        emoji: "🐷",
+        img: "generated-images/猪八戒.png",
+        title: "乐天行动派",
+        name: "猪八戒",
+        description: "你是团队的快乐源泉！乐观开朗的你总能在最艰难的时刻带来欢笑。你的情商很高，善于调解气氛，让人愿意与你相处。虽然偶尔会偷懒耍滑，但你的善良和真诚从未改变。专注和坚持是你需要修炼的课题！",
+        traits: ["乐观开朗", "善于社交", "接地气", "真实可爱"],
+        exam: "本题对应《西游记》中猪八戒的人物形象。中考常见考点：猪八戒性格中的【人性】一面（贪吃、懒惰但不失善良）；分析【九齿钉耙】这一武器的象征意义；理解喜剧人物在小说中的作用。"
+      },
+      sand: {
+        emoji: "💪",
+        img: "generated-images/沙和尚.png",
+        title: "默默守护者",
+        name: "沙僧",
+        description: "你是团队最可靠的依靠！不显山不露水，但每个人都知道你在默默付出。你的情绪稳定、踏实可靠，是团队和谐的重要保障。虽然话不多，但你的存在本身就是一种力量。学会表达自己、展示价值，你会被更多人看见！",
+        traits: ["忠诚可靠", "情绪稳定", "踏实勤恳", "默默付出"],
+        exam: "本题对应《西游记》中沙僧的人物形象。中考常见考点：沙僧在团队中的【粘合剂】作用；分析不起眼人物的重要价值；理解《西游记》的群像塑造手法。"
+      },
+      special: {
+        emoji: "🏆",
+        img: "generated-images/斗战胜佛.png",
+        title: "斗战胜佛",
+        name: "悟空 + 唐僧",
+        description: "你有孙悟空的本领与勇气，也有唐僧的信念与坚持！这样的组合注定不凡——你既能披荆斩棘解决问题，又能不忘初心坚定前行。既是能力的强者，也是精神的领袖。取经路上，你就是那道最耀眼的光！",
+        traits: ["信念坚定", "智勇双全", "不忘初心", "注定不凡"],
+        exam: "恭喜你同时拥有取经团队两大核心品质的完美融合！中考名著阅读中，这种【组合型人物分析】是难点：理解唐僧的【信念】与孙悟空的【能力】如何互补；探讨理想与能力的辩证关系；理解《西游记》团队合作的主题。"
+      }
+    };
+
+    // 状态
+    let currentQuestion = 0;
+    let scores = { tang: 0, sun: 0, pig: 0, sand: 0 };
+    let answered = false;
+
+    // 页面切换
+    function showCover() {
+      switchPage('cover');
+    }
+
+    function showIntro() {
+      switchPage('intro');
+    }
+
+    function startTest() {
+      currentQuestion = 0;
+      scores = { tang: 0, sun: 0, pig: 0, sand: 0 };
+      switchPage('test');
+      showQuestion();
+    }
+
+    function switchPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    // 显示题目
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      const progress = ((currentQuestion) / questions.length) * 100;
+      
+      document.getElementById('progressFill').style.width = progress + '%';
+      document.getElementById('progressText').textContent = `第 ${currentQuestion + 1} 题 / 共 ${questions.length} 题`;
+      document.getElementById('questionNumber').textContent = `第${['一','二','三','四','五','六','七','八'][currentQuestion]}题`;
+      document.getElementById('questionText').textContent = q.scenario;
+      
+      const optionsHtml = q.options.map((opt, idx) => `
+        <div class="option" data-index="${idx}">
+          <span class="option-icon">${opt.icon}</span>
+          <span class="option-text">${opt.text}</span>
+        </div>
+      `).join('');
+      
+      document.getElementById('options').innerHTML = optionsHtml;
+      
+      // 给选项添加点击事件
+      document.querySelectorAll('.option').forEach((opt, idx) => {
+        opt.addEventListener('click', function() {
+          selectOption(idx);
+        });
+      });
+      
+      answered = false;
+    }
+
+    // 选择选项
+    function selectOption(index) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQuestion];
+      const selectedOption = q.options[index];
+      scores[selectedOption.character]++;
+
+      // 标记选中
+      document.querySelectorAll('.option').forEach((opt, idx) => {
+        if (idx === index) {
+          opt.classList.add('selected');
+        }
+        opt.style.pointerEvents = 'none';
+      });
+
+      // 延迟后进入下一题或显示结果
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
+        } else {
+          showResult();
+        }
+      }, 800);
+    }
+
+    // 显示结果
+    function showResult() {
+      const maxScore = Math.max(...Object.values(scores));
+      const winners = Object.keys(scores).filter(k => scores[k] === maxScore);
+      
+      let resultKey;
+      // 斗战胜佛：唐僧>=3 且 悟空>=5
+      const tangScore = scores['tang'] || 0;
+      const sunScore = scores['sun'] || 0;
+      if (tangScore >= 3 && sunScore >= 5) {
+        resultKey = 'special';
+      } else if (winners.length === 1) {
+        resultKey = winners[0];
+      } else {
+        // 如果有多于一个最高分，取总和最高的唐僧或悟空
+        resultKey = winners.includes('tang') ? 'tang' : winners.includes('sun') ? 'sun' : winners[0];
+      }
+
+      const result = results[resultKey];
+      
+      // 隐藏emoji，显示人物图片
+      document.getElementById('resultCharacter').style.display = 'none';
+      const imgContainer = document.getElementById('resultCharacterImg');
+      const imgElement = document.getElementById('resultImg');
+      imgElement.src = result.img;
+      imgContainer.style.display = 'block';
+      
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultName').textContent = result.name;
+      document.getElementById('resultDescription').textContent = result.description;
+      document.getElementById('examTip').textContent = result.exam;
+      
+      const traitsHtml = result.traits.map(t => `<span class="trait">${t}</span>`).join('');
+      document.getElementById('traits').innerHTML = traitsHtml;
+
+      switchPage('result');
+    }
+
+    // 重新测试
+    function restartTest() {
+      startTest();
+    }
+
+    // 分享结果 - 生成图片并下载
+    async function shareResult() {
+      const resultCard = document.querySelector('.result-card');
+      const btn = document.getElementById('btnShare');
+      const resultActions = document.querySelector('.result-actions');
+      
+      btn.textContent = '生成中...';
+      btn.disabled = true;
+      
+      try {
+        // 先隐藏按钮区域
+        resultActions.style.display = 'none';
+        
+        // 生成主图片
+        const canvas = await html2canvas(resultCard, {
+          backgroundColor: '#FDFBF7',
+          scale: 2,
+          useCORS: true
+        });
+        
+        // 恢复按钮区域
+        resultActions.style.display = '';
+        
+        // 下载图片
+        const link = document.createElement('a');
+        link.download = '《西游记》性格测试结果.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.textContent = '保存图片分享';
+      } catch (err) {
+        console.error('生成图片失败:', err);
+        resultActions.style.display = '';
+        // 降级：复制文本
+        const resultName = document.getElementById('resultName').textContent;
+        const resultTitle = document.getElementById('resultTitle').textContent;
+        const text = `我在【你是《西游记》中的谁】测试中结果是：${resultName}（${resultTitle}）！你也来试试吧~`;
+        navigator.clipboard.writeText(text);
+        alert('图片生成失败，已复制文字到剪贴板！');
+      }
+      
+      btn.disabled = false;
+    }
+    
+    // 绑定按钮事件
+    document.getElementById('btnStart').addEventListener('click', showIntro);
+    document.getElementById('btnGo').addEventListener('click', startTest);
+    document.getElementById('btnBack').addEventListener('click', showCover);
+    document.getElementById('btnRestart').addEventListener('click', restartTest);
+    document.getElementById('btnShare').addEventListener('click', shareResult);
+    
+    console.log('事件绑定完成!');
+  </script>
+</body>
+</html>

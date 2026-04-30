@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你是西游记中的谁 - 测试</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; text-align: center; }
+    .btn { padding: 15px 40px; font-size: 18px; background: #C41E3A; color: white; border: none; border-radius: 25px; cursor: pointer; }
+    .btn:hover { background: #a3182f; }
+    #message { margin-top: 20px; font-size: 20px; color: green; min-height: 30px; }
+  </style>
+</head>
+<body>
+  <h1>JavaScript 测试页面</h1>
+  <button class="btn" onclick="testClick()">点击测试</button>
+  <div id="message"></div>
+  
+  <script>
+    console.log('页面加载完成!');
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOMContentLoaded 触发!');
+    });
+    
+    function testClick() {
+      document.getElementById('message').textContent = 'JavaScript 工作正常!';
+      console.log('按钮点击成功!');
+    }
+  </script>
+</body>
+</html>
