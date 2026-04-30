@@ -326,6 +326,10 @@
       align-items: center;
       gap: 14px;
       position: relative;
+      /* 禁用移动端点击高亮 */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .option:hover {
@@ -633,6 +637,7 @@
         <div class="mini-character"><img src="generated-images/唐僧.png" alt="唐僧"></div>
         <div class="mini-character"><img src="generated-images/孙悟空.png" alt="孙悟空"></div>
         <div class="mini-character"><img src="generated-images/猪八戒.png" alt="猪八戒"></div>
+        <div class="mini-character"><img src="generated-images/白龙马.png" alt="白龙马"></div>
         <div class="mini-character"><img src="generated-images/沙和尚.png" alt="沙悟净"></div>
       </div>
 
@@ -720,7 +725,7 @@
         options: [
           { text: "冷静下来仔细观察，寻找可能的路径或方法", character: "sand", icon: "🤔" },
           { text: "二话不说直接尝试翻越，办法总比困难多！", character: "sun", icon: "💪" },
-          { text: "先问问有没有人知道捷径，或者找个地方歇歇再说", character: "sand", icon: "😌" },
+          { text: "默默寻找能承受重量的路基，先确保人和行李安全", character: "white", icon: "🐴" },
         ]
       },
       {
@@ -729,7 +734,7 @@
         options: [
           { text: "协调者，确保每个人都知道自己要做什么", character: "tang", icon: "👑" },
           { text: "先锋，去做最难、最关键的那部分", character: "sun", icon: "⚔️" },
-          { text: "支持者，做好自己的同时顺便帮帮其他人", character: "sand", icon: "🤝" }
+          { text: "做好本职工作，让队友能安心冲锋", character: "white", icon: "🐴" }
         ]
       },
       {
@@ -745,7 +750,7 @@
         id: 4,
         scenario: "长途跋涉后你感到非常疲惫，这时候你会？",
         options: [
-          { text: "咬牙坚持，不能因为自己影响团队进度", character: "sand", icon: "💪" },
+          { text: "咬牙坚持，不能因为自己影响团队进度", character: "white", icon: "💪" },
           { text: "想办法让大家振作起来，士气比体力更重要", character: "pig", icon: "🎉" },
           { text: "调整心态继续前进，目标就在前方", character: "tang", icon: "🎯" }
         ]
@@ -765,7 +770,7 @@
         options: [
           { text: "充分讨论，争取说服对方或找到折中方案", character: "tang", icon: "🗣️" },
           { text: "坚持自己的判断，用结果来证明", character: "sun", icon: "🦁" },
-          { text: "先顺着对方，之后再慢慢调整", character: "pig", icon: "🐵" }
+          { text: "先顺着大家的想法，减少冲突", character: "white", icon: "🐴" }
         ]
       },
       {
@@ -773,8 +778,8 @@
         scenario: "你更认同下面哪种对【成功】的定义？",
         options: [
           { text: "达到最初设定的目标，坚持就是胜利", character: "tang", icon: "🎯" },
-          { text: "在追求目标的过程中不断成长和突破", character: "sun", icon: "📈" },
-          { text: "让身边的人因为你而感到幸福和安心", character: "sand", icon: "💖" }
+          { text: "在追求目标的过程中不断成长和突破", character: "sand", icon: "📈" },
+          { text: "陪伴大家走到终点，完成使命就是成功", character: "white", icon: "💖" }
         ]
       },
       {
@@ -826,6 +831,15 @@
         traits: ["忠诚可靠", "情绪稳定", "踏实勤恳", "默默付出"],
         exam: "本题对应《西游记》中沙僧的人物形象。中考常见考点：沙僧在团队中的【粘合剂】作用；分析不起眼人物的重要价值；理解《西游记》的群像塑造手法。"
       },
+      white: {
+        emoji: "🐴",
+        img: "generated-images/白龙马.png",
+        title: "负重前行者",
+        name: "白龙马",
+        description: "你是那个默默驮着大家前行的人！不争功、不张扬，但关键时刻从不缺席。你的坚持和隐忍，是一种更深沉的力量。即使不被看见，你也在用自己的方式照亮前路。你是团队真正的无名英雄！",
+        traits: ["默默奉献", "忠诚隐忍", "关键时刻爆发", "低调可靠"],
+        exam: "本题对应《西游记》中白龙马的人物形象。中考常见考点：白龙马【鹰愁涧】的情节意义；分析白龙马在取经团队中的独特作用——不争锋芒、甘于负重；理解《西游记》中【被忽视的英雄】主题。"
+      },
       special: {
         emoji: "🏆",
         img: "generated-images/斗战胜佛.png",
@@ -839,7 +853,7 @@
 
     // 状态
     let currentQuestion = 0;
-    let scores = { tang: 0, sun: 0, pig: 0, sand: 0 };
+    let scores = { tang: 0, sun: 0, pig: 0, sand: 0, white: 0 };
     let answered = false;
 
     // 页面切换
@@ -853,7 +867,7 @@
 
     function startTest() {
       currentQuestion = 0;
-      scores = { tang: 0, sun: 0, pig: 0, sand: 0 };
+      scores = { tang: 0, sun: 0, pig: 0, sand: 0, white: 0 };
       switchPage('test');
       showQuestion();
     }
@@ -934,8 +948,14 @@
       } else if (winners.length === 1) {
         resultKey = winners[0];
       } else {
-        // 如果有多于一个最高分，取总和最高的唐僧或悟空
-        resultKey = winners.includes('tang') ? 'tang' : winners.includes('sun') ? 'sun' : winners[0];
+        // 如果有多于一个最高分，优先级：唐僧 > 悟空 > 白龙马 > 沙僧 > 八戒
+        const priority = ['tang', 'sun', 'white', 'sand', 'pig'];
+        for (const char of priority) {
+          if (winners.includes(char)) {
+            resultKey = char;
+            break;
+          }
+        }
       }
 
       const result = results[resultKey];
